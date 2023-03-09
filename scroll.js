@@ -14,6 +14,7 @@ var scroll_history;
         var _current_bucket = 0
         var max_scroll = 0;
         scroll_history = {};
+        var bucket;
 
         // add event listener function
         function addListener(obj, type, fn) {
@@ -55,7 +56,7 @@ var scroll_history;
         */
         function _get_window_Yscroll() {
             return window.pageYOffset || document.body.scrollTop ||
-                documentElement.scrollTop || 0;
+                document.documentElement.scrollTop || 0;
         }
 
         /**
@@ -65,9 +66,9 @@ var scroll_history;
         */
         function _get_doc_height() {
             return Math.max(
-                document.body.scrollHeight || 0, documentElement.scrollHeight || 0,
-                document.body.offsetHeight || 0, documentElement.offsetHeight || 0,
-                document.body.clientHeight || 0, documentElement.clientHeight || 0
+                document.body.scrollHeight || 0, document.documentElement.scrollHeight || 0,
+                document.body.offsetHeight || 0, document.documentElement.offsetHeight || 0,
+                document.body.clientHeight || 0, document.documentElement.clientHeight || 0
             );
         }
 
@@ -85,7 +86,7 @@ var scroll_history;
         //check if another milestone is hit 
         function scrollTracker() {
             max_scroll = _get_scroll_percentage()
-            var bucket = (max_scroll > SETTINGS.scroll_grouping ? 1 : 0) * Math.floor((max_scroll) / SETTINGS.scroll_grouping) * SETTINGS.scroll_grouping;
+            bucket = (max_scroll > SETTINGS.scroll_grouping ? 1 : 0) * Math.floor((max_scroll) / SETTINGS.scroll_grouping) * SETTINGS.scroll_grouping;
             if (bucket > _current_bucket) {
                 _current_bucket = max_scroll;
                 if (typeof (dataLayer) !== 'undefined' && scroll_history[bucket] != true) {
@@ -96,6 +97,7 @@ var scroll_history;
         //send hit and back fill skipped milestones 
         function sentHit(percent_num) {
             if (scroll_history[percent_num] != true) {
+                var dL = new Object();
                 dL["event"] = SETTINGS.data_layer_event_name;
                 dL[SETTINGS.data_layer_event_param1_name] = bucket;
                 dataLayer.push(dL);
@@ -138,7 +140,3 @@ var scroll_history;
     }
 
 })();
-
-
-
-
